@@ -94,6 +94,10 @@
       text-align: center;
       margin-top: 20px;
     }
+    .address-form {
+      display: none;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -113,15 +117,15 @@
     <div id="product-list" class="product-list"></div>
 
     <!-- Shipping Form -->
-    <div id="shipping-form" style="display: none;">
+    <div id="address-form" class="address-form">
       <h3>Enter Delivery Information</h3>
-      <form id="deliveryForm" onsubmit="validateAndProceed(event)">
+      <form id="deliveryForm">
         <input type="text" id="name" placeholder="Your Name" required><br><br>
         <input type="text" id="address" placeholder="Street Address" required><br><br>
         <input type="text" id="city" placeholder="City" required><br><br>
         <input type="text" id="zip" placeholder="Zip Code (Staten Island Only)" required><br><br>
         <input type="tel" id="phone" placeholder="Phone Number" required><br><br>
-        <button type="submit" class="btn">Proceed to Payment</button>
+        <button type="button" class="btn" onclick="validateAndProceed()">Proceed to Payment</button>
       </form>
       <div id="error-message" class="error" style="display: none;">Cannot be delivered. Please enter a valid Staten Island address.</div>
     </div>
@@ -165,7 +169,7 @@
       document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
       document.getElementById('welcome-msg').style.display = 'block';
       document.getElementById('product-list').innerHTML = '';
-      document.getElementById('shipping-form').style.display = 'none';
+      document.getElementById('address-form').style.display = 'none';
     }
 
     function loadCategory(category) {
@@ -173,12 +177,12 @@
       const list = document.getElementById('product-list');
       const title = document.getElementById('category-title');
       const welcome = document.getElementById('welcome-msg');
-      const shippingForm = document.getElementById('shipping-form');
+      const addressForm = document.getElementById('address-form');
 
       title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
       welcome.style.display = 'none';
       list.innerHTML = '';
-      shippingForm.style.display = 'block';
+      addressForm.style.display = 'block';
 
       products.forEach(product => {
         const item = document.createElement('div');
@@ -188,31 +192,35 @@
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <div class="price">$${product.price}</div>
+          <button class="btn" onclick="showAddressForm('${product.stripeLink}')">Buy Now</button>
         `;
         list.appendChild(item);
       });
     }
 
-    function validateAndProceed(event) {
-      event.preventDefault(); // Prevent form submission
+    function showAddressForm(stripeLink) {
+      document.getElementById('address-form').setAttribute('data-stripe-link', stripeLink);
+      document.getElementById('address-form').style.display = 'block';
+    }
 
-      // Get the zip code entered by the customer
+    function validateAndProceed() {
       const zip = document.getElementById('zip').value;
-
-      // Staten Island zip codes (Example: change with full list)
+      
+      // Staten Island zip codes (Example, add more if needed)
       const statenIslandZipCodes = ["10301", "10302", "10303", "10304", "10305", "10306", "10307", "10308", "10309", "10310"];
 
-      // Check if zip code is valid for Staten Island
       if (!statenIslandZipCodes.includes(zip)) {
         document.getElementById('error-message').style.display = 'block';
-        return; // Stop further processing if zip is invalid
+        return;
       }
 
-      document.getElementById('error-message').style.display = 'none'; // Hide error message
+      document.getElementById('error-message').style.display = 'none';
 
-      // Proceed to Stripe payment (you can also pass shipping info with your payment)
-      const stripeLink = document.querySelector('.product-item .stripeLink').href;
-      window.location.href = stripeLink; // Redirect to Stripe payment link
+      // Get the Stripe payment link from the form data
+      const stripeLink = document.getElementById('address-form').getAttribute('data-stripe-link');
+
+      // Redirect to Stripe payment link
+      window.location.href = stripeLink;
     }
   </script>
 
