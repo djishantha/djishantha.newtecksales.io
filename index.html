@@ -5,52 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BUY MY GOODS</title>
   <style>
-    /* Embedded CSS */
+    /* Basic Styles */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
       color: #333;
       background-color: #f8f8f8;
     }
-
     header {
       background-color: #333;
       color: white;
       padding: 20px;
       text-align: center;
     }
-
     nav a {
       color: white;
       margin: 0 15px;
       text-decoration: none;
     }
-
     nav a:hover {
       text-decoration: underline;
     }
-
     main {
       padding: 20px;
     }
-
     h2 {
       text-align: center;
       margin-bottom: 20px;
     }
-
     .product-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
     }
-
     .product-item {
       background-color: white;
       padding: 20px;
@@ -59,29 +51,24 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
-
     .product-item img {
       max-width: 100%;
       height: auto;
       border-radius: 8px;
     }
-
     .product-item h3 {
       font-size: 1.2em;
       margin: 10px 0;
     }
-
     .product-item p {
       font-size: 0.9em;
       color: #777;
     }
-
     .product-item .price {
       font-size: 1.2em;
       font-weight: bold;
       margin: 10px 0;
     }
-
     footer {
       text-align: center;
       padding: 20px;
@@ -89,7 +76,6 @@
       color: white;
       margin-top: 40px;
     }
-
     .btn {
       background-color: #0070ba;
       color: white;
@@ -100,9 +86,13 @@
       display: inline-block;
       text-decoration: none;
     }
-
     .btn:hover {
       background-color: #003087;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -121,6 +111,20 @@
     <h2 id="category-title">Welcome to BUY MY GOODS</h2>
     <p id="welcome-msg">Click a category above to browse products.</p>
     <div id="product-list" class="product-list"></div>
+
+    <!-- Shipping Form -->
+    <div id="shipping-form" style="display: none;">
+      <h3>Enter Delivery Information</h3>
+      <form id="deliveryForm" onsubmit="validateAndProceed(event)">
+        <input type="text" id="name" placeholder="Your Name" required><br><br>
+        <input type="text" id="address" placeholder="Street Address" required><br><br>
+        <input type="text" id="city" placeholder="City" required><br><br>
+        <input type="text" id="zip" placeholder="Zip Code (Staten Island Only)" required><br><br>
+        <input type="tel" id="phone" placeholder="Phone Number" required><br><br>
+        <button type="submit" class="btn">Proceed to Payment</button>
+      </form>
+      <div id="error-message" class="error" style="display: none;">Cannot be delivered. Please enter a valid Staten Island address.</div>
+    </div>
   </main>
 
   <footer>
@@ -143,13 +147,6 @@
           "description": "1.5L electric kettle with auto shut-off.",
           "price": "30",
           "image": "https://via.placeholder.com/250x150?text=Kettle",
-          "stripeLink": "https://buy.stripe.com/bJe8wO98U9AI7vL6Df7Vm00"
-        },
-        {
-          "name": "Blender",
-          "description": "Smoothie maker blender with multi-speed control.",
-          "price": "60",
-          "image": "https://via.placeholder.com/250x150?text=Blender",
           "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         }
       ],
@@ -157,22 +154,8 @@
         {
           "name": "Cotton T-Shirt",
           "description": "Comfortable cotton t-shirt for daily wear.",
-          "price": "5",
+          "price": "15",
           "image": "https://via.placeholder.com/250x150?text=T-Shirt",
-          "stripeLink": "https://buy.stripe.com/test_fZu4gy1Dh9lg0JiaVk48001"
-        },
-        {
-          "name": "Jeans",
-          "description": "Slim fit denim jeans with stretch.",
-          "price": "40",
-          "image": "https://via.placeholder.com/250x150?text=Jeans",
-          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
-        },
-        {
-          "name": "Jacket",
-          "description": "Windproof winter jacket, waterproof design.",
-          "price": "80",
-          "image": "https://via.placeholder.com/250x150?text=Jacket",
           "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         }
       ]
@@ -182,6 +165,7 @@
       document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
       document.getElementById('welcome-msg').style.display = 'block';
       document.getElementById('product-list').innerHTML = '';
+      document.getElementById('shipping-form').style.display = 'none';
     }
 
     function loadCategory(category) {
@@ -189,10 +173,12 @@
       const list = document.getElementById('product-list');
       const title = document.getElementById('category-title');
       const welcome = document.getElementById('welcome-msg');
+      const shippingForm = document.getElementById('shipping-form');
 
       title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
       welcome.style.display = 'none';
       list.innerHTML = '';
+      shippingForm.style.display = 'block';
 
       products.forEach(product => {
         const item = document.createElement('div');
@@ -202,10 +188,31 @@
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <div class="price">$${product.price}</div>
-          <a href="${product.stripeLink}" class="btn" target="_blank">Buy Now</a>
         `;
         list.appendChild(item);
       });
+    }
+
+    function validateAndProceed(event) {
+      event.preventDefault(); // Prevent form submission
+
+      // Get the zip code entered by the customer
+      const zip = document.getElementById('zip').value;
+
+      // Staten Island zip codes (Example: change with full list)
+      const statenIslandZipCodes = ["10301", "10302", "10303", "10304", "10305", "10306", "10307", "10308", "10309", "10310"];
+
+      // Check if zip code is valid for Staten Island
+      if (!statenIslandZipCodes.includes(zip)) {
+        document.getElementById('error-message').style.display = 'block';
+        return; // Stop further processing if zip is invalid
+      }
+
+      document.getElementById('error-message').style.display = 'none'; // Hide error message
+
+      // Proceed to Stripe payment (you can also pass shipping info with your payment)
+      const stripeLink = document.querySelector('.product-item .stripeLink').href;
+      window.location.href = stripeLink; // Redirect to Stripe payment link
     }
   </script>
 
