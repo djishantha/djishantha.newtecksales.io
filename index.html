@@ -98,6 +98,11 @@
       display: none;
       margin-top: 20px;
     }
+    .address-form input {
+      margin: 10px 0;
+      padding: 8px;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -116,7 +121,7 @@
     <p id="welcome-msg">Click a category above to browse products.</p>
     <div id="product-list" class="product-list"></div>
 
-    <!-- Shipping Form -->
+    <!-- Shipping Form Template (Hidden until "Buy Now" is clicked) -->
     <div id="address-form" class="address-form">
       <h3>Enter Delivery Information</h3>
       <form id="deliveryForm">
@@ -182,7 +187,7 @@
       title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
       welcome.style.display = 'none';
       list.innerHTML = '';
-      addressForm.style.display = 'block';
+      addressForm.style.display = 'none'; // Hide the address form by default
 
       products.forEach(product => {
         const item = document.createElement('div');
@@ -192,15 +197,19 @@
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <div class="price">$${product.price}</div>
-          <button class="btn" onclick="showAddressForm('${product.stripeLink}')">Buy Now</button>
+          <button class="btn" onclick="showAddressForm('${product.name}', '${product.stripeLink}')">Buy Now</button>
         `;
         list.appendChild(item);
       });
     }
 
-    function showAddressForm(stripeLink) {
-      document.getElementById('address-form').setAttribute('data-stripe-link', stripeLink);
-      document.getElementById('address-form').style.display = 'block';
+    function showAddressForm(productName, stripeLink) {
+      const addressForm = document.getElementById('address-form');
+      addressForm.style.display = 'block';
+
+      // Store product information in the form for later use
+      addressForm.setAttribute('data-product-name', productName);
+      addressForm.setAttribute('data-stripe-link', stripeLink);
     }
 
     function validateAndProceed() {
@@ -216,13 +225,5 @@
 
       document.getElementById('error-message').style.display = 'none';
 
-      // Get the Stripe payment link from the form data
-      const stripeLink = document.getElementById('address-form').getAttribute('data-stripe-link');
-
-      // Redirect to Stripe payment link
-      window.location.href = stripeLink;
-    }
-  </script>
-
-</body>
-</html>
+      // Retrieve product and payment link from the form data
+      const productName = document.getElementById('address-form').getAttribute('data-product-name
