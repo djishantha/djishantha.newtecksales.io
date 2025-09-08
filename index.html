@@ -97,6 +97,8 @@
       padding: 10px 16px;
       border-radius: 4px;
       cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
     }
 
     .btn:hover {
@@ -133,19 +135,22 @@
           "name": "Microwave Oven",
           "description": "High power microwave oven with touch control.",
           "price": "150",
-          "image": "https://via.placeholder.com/250x150?text=Microwave"
+          "image": "https://via.placeholder.com/250x150?text=Microwave",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         },
         {
           "name": "Electric Kettle",
           "description": "1.5L electric kettle with auto shut-off.",
           "price": "30",
-          "image": "https://via.placeholder.com/250x150?text=Kettle"
+          "image": "https://via.placeholder.com/250x150?text=Kettle",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         },
         {
           "name": "Blender",
           "description": "Smoothie maker blender with multi-speed control.",
           "price": "60",
-          "image": "https://via.placeholder.com/250x150?text=Blender"
+          "image": "https://via.placeholder.com/250x150?text=Blender",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         }
       ],
       "garments": [
@@ -153,27 +158,32 @@
           "name": "Cotton T-Shirt",
           "description": "Comfortable cotton t-shirt for daily wear.",
           "price": "15",
-          "image": "https://via.placeholder.com/250x150?text=T-Shirt"
+          "image": "https://via.placeholder.com/250x150?text=T-Shirt",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         },
         {
           "name": "Jeans",
           "description": "Slim fit denim jeans with stretch.",
           "price": "40",
-          "image": "https://via.placeholder.com/250x150?text=Jeans"
+          "image": "https://via.placeholder.com/250x150?text=Jeans",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         },
         {
           "name": "Jacket",
           "description": "Windproof winter jacket, waterproof design.",
           "price": "80",
-          "image": "https://via.placeholder.com/250x150?text=Jacket"
+          "image": "https://via.placeholder.com/250x150?text=Jacket",
+          "stripeLink": "https://buy.stripe.com/test_3cI5kC2Hl694fEc8Nc48000"
         }
       ]
     };
-function resetView() {
-    document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
-    document.getElementById('welcome-msg').style.display = 'block';
-    document.getElementById('product-list').innerHTML = '';
-  }
+
+    function resetView() {
+      document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
+      document.getElementById('welcome-msg').style.display = 'block';
+      document.getElementById('product-list').innerHTML = '';
+    }
+
     function loadCategory(category) {
       const products = productData[category];
       const list = document.getElementById('product-list');
@@ -192,14 +202,7 @@ function resetView() {
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <div class="price">$${product.price}</div>
-          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-            <input type="hidden" name="cmd" value="_xclick">
-            <input type="hidden" name="business" value="YOUR_PAYPAL_djnishantha@proton.me">
-            <input type="hidden" name="item_name" value="${product.name}">
-            <input type="hidden" name="amount" value="${product.price}">
-            <input type="hidden" name="currency_code" value="USD">
-            <input type="submit" value="Buy Now" class="btn">
-          </form>
+          <a href="${product.stripeLink}" class="btn" target="_blank">Buy Now</a>
         `;
         list.appendChild(item);
       });
