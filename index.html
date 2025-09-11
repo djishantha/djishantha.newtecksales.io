@@ -45,6 +45,12 @@
       margin-bottom: 20px;
     }
 
+    #back-home {
+      text-align: center;
+      margin-bottom: 20px;
+      display: none;
+    }
+
     .product-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -58,6 +64,11 @@
       border: 1px solid #ddd;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .product-item:hover {
+      transform: translateY(-5px);
     }
 
     .product-item img {
@@ -82,14 +93,6 @@
       margin: 10px 0;
     }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #333;
-      color: white;
-      margin-top: 40px;
-    }
-
     .btn {
       background-color: #0070ba;
       color: white;
@@ -103,6 +106,14 @@
 
     .btn:hover {
       background-color: #003087;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+      margin-top: 40px;
     }
   </style>
 </head>
@@ -120,6 +131,13 @@
   <main>
     <h2 id="category-title">Welcome to BUY MY GOODS</h2>
     <p id="welcome-msg">Click a category above to browse products.</p>
+
+    <!-- Back to Home Button -->
+    <div id="back-home">
+      <button class="btn" onclick="resetView()">← Back to Home</button>
+    </div>
+
+    <!-- Product Listing -->
     <div id="product-list" class="product-list"></div>
   </main>
 
@@ -178,27 +196,34 @@
       ]
     };
 
+    // Reset to Home View
     function resetView() {
       document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
       document.getElementById('welcome-msg').style.display = 'block';
       document.getElementById('product-list').innerHTML = '';
+      document.getElementById('back-home').style.display = 'none';
     }
 
+    // Load a Category
     function loadCategory(category) {
       const products = productData[category];
       const list = document.getElementById('product-list');
       const title = document.getElementById('category-title');
       const welcome = document.getElementById('welcome-msg');
+      const backButton = document.getElementById('back-home');
 
+      // Set title
       title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
       welcome.style.display = 'none';
       list.innerHTML = '';
+      backButton.style.display = 'block';
 
+      // Render each product
       products.forEach(product => {
         const item = document.createElement('div');
         item.className = 'product-item';
         item.innerHTML = `
-          <img src="${product.image}" alt="${product.name}" />
+          <img src="${product.image}" alt="Image of ${product.name}" />
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <div class="price">$${product.price}</div>
