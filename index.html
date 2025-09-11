@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BUY MY GOODS</title>
   <style>
-    /* Embedded CSS */
     * {
       margin: 0;
       padding: 0;
@@ -196,7 +195,6 @@
       ]
     };
 
-    // Reset to Home View
     function resetView() {
       document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
       document.getElementById('welcome-msg').style.display = 'block';
@@ -204,7 +202,6 @@
       document.getElementById('back-home').style.display = 'none';
     }
 
-    // Load a Category
     function loadCategory(category) {
       const products = productData[category];
       const list = document.getElementById('product-list');
@@ -212,13 +209,11 @@
       const welcome = document.getElementById('welcome-msg');
       const backButton = document.getElementById('back-home');
 
-      // Set title
       title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
       welcome.style.display = 'none';
       list.innerHTML = '';
       backButton.style.display = 'block';
 
-      // Render each product
       products.forEach(product => {
         const item = document.createElement('div');
         item.className = 'product-item';
