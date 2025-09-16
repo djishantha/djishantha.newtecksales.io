@@ -5,168 +5,143 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BUY MY GOODS</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; line-height: 1.6; background-color: #f8f8f8; color: #333; }
-    header { background-color: #333; color: white; padding: 20px; text-align: center; position: relative; }
-    nav a { color: white; margin: 0 15px; text-decoration: none; }
+    body { font-family: Arial, sans-serif; background: #f8f8f8; margin: 0; }
+    header { background: #333; color: #fff; padding: 20px; text-align: center; position: relative; }
+    nav a { color: #fff; margin: 0 15px; text-decoration: none; }
     nav a:hover { text-decoration: underline; }
     #cart-btn { position: absolute; right: 20px; top: 20px; background: #0070ba; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
     #cart-btn:hover { background: #003087; }
     main { padding: 20px; }
-    h2 { text-align: center; margin-bottom: 20px; }
-    #back-home { text-align: center; margin-bottom: 20px; display: none; }
     .product-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-    .product-item { background: white; padding: 20px; text-align: center; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
-    .product-item:hover { transform: translateY(-5px); }
-    .product-item img { max-width: 100%; height: auto; border-radius: 8px; }
-    .product-item h3 { font-size: 1.2em; margin: 10px 0; }
-    .product-item p { font-size: 0.9em; color: #777; }
-    .product-item .price { font-size: 1.2em; font-weight: bold; margin: 10px 0; }
-    .btn { background-color: #0070ba; color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; text-decoration: none; }
-    .btn:hover { background-color: #003087; }
-    footer { text-align: center; padding: 20px; background-color: #333; color: white; margin-top: 40px; }
+    .product-item { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); text-align: center; }
+    .product-item img { max-width: 100%; border-radius: 8px; }
+    .btn { background: #0070ba; color: #fff; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; }
+    .btn:hover { background: #003087; }
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background: #f2f2f2; }
-    #checkout-btn { margin-top: 20px; display: block; }
+    th { background: #eee; }
   </style>
 </head>
 <body>
+<header>
+  <h1>BUY MY GOODS</h1>
+  <nav>
+    <a href="#" onclick="resetView()">Home</a>
+    <a href="#" onclick="loadCategory('home-appliances')">Home Appliances</a>
+    <a href="#" onclick="loadCategory('garments')">Readymade Garments</a>
+  </nav>
+  <div id="cart-btn" onclick="showCart()">🛒 Cart (<span id="cart-count">0</span>)</div>
+</header>
 
-  <header>
-    <h1>BUY MY GOODS</h1>
-    <nav>
-      <a href="#" onclick="resetView()">Home</a>
-      <a href="#" onclick="loadCategory('home-appliances')">Home Appliances</a>
-      <a href="#" onclick="loadCategory('garments')">Readymade Garments</a>
-    </nav>
-    <div id="cart-btn" onclick="showCart()">🛒 Cart (<span id="cart-count">0</span>)</div>
-  </header>
+<main>
+  <h2 id="category-title">Welcome</h2>
+  <p id="welcome-msg">Choose a category to browse products.</p>
+  <div id="product-list" class="product-list"></div>
 
-  <main>
-    <h2 id="category-title">Welcome to BUY MY GOODS</h2>
-    <p id="welcome-msg">Click a category above to browse products.</p>
-    <div id="back-home">
-      <button class="btn" onclick="resetView()">← Back to Home</button>
-    </div>
-    <div id="product-list" class="product-list"></div>
-    <div id="cart-page" style="display:none;">
-      <h2>Your Cart</h2>
-      <table id="cart-table">
-        <thead>
-          <tr>
-            <th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <h3 id="cart-total"></h3>
-      <a href="https://buy.stripe.com/test_7sIdR81Gs14c03j6op00" target="_blank" class="btn" id="checkout-btn">Pay Now</a>
-    </div>
-  </main>
+  <div id="cart-page" style="display:none;">
+    <h2>Your Cart</h2>
+    <table>
+      <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th>Action</th></tr></thead>
+      <tbody id="cart-body"></tbody>
+    </table>
+    <h3 id="cart-total"></h3>
+    <button class="btn" onclick="checkout()">Pay Now</button>
+  </div>
+</main>
 
-  <footer>
-    <p>© 2025 BUY MY GOODS | All rights reserved</p>
-  </footer>
+<script>
+  const productData = {
+    "home-appliances": [
+      { name: "Microwave Oven", price: 150, description: "High power microwave.", image: "https://via.placeholder.com/250x150?text=Microwave" },
+      { name: "Kettle", price: 30, description: "1.5L electric kettle.", image: "https://via.placeholder.com/250x150?text=Kettle" }
+    ],
+    "garments": [
+      { name: "T-Shirt", price: 5, description: "Cotton t-shirt.", image: "https://via.placeholder.com/250x150?text=T-Shirt" },
+      { name: "Jeans", price: 25, description: "Slim fit jeans.", image: "https://via.placeholder.com/250x150?text=Jeans" }
+    ]
+  };
 
-  <script>
-    // Product Data
-    const productData = {
-      "home-appliances": [
-        { name: "Microwave Oven", description: "High power microwave oven with touch control.", price: 150, image: "microwave.jpg" },
-        { name: "Electric Kettle", description: "1.5L electric kettle with auto shut-off.", price: 30, image: "kettle.jpg" },
-        { name: "Blender", description: "Smoothie maker blender with multi-speed control.", price: 20, image: "blender.jpg" }
-      ],
-      "garments": [
-        { name: "Cotton T-Shirt", description: "Comfortable cotton t-shirt for daily wear.", price: 5, image: "tshirt.jpg" },
-        { name: "Jeans", description: "Slim fit denim jeans with stretch.", price: 25, image: "jean.jpg" },
-        { name: "Jacket", description: "Windproof winter jacket, waterproof design.", price: 30, image: "jacket.jpg" }
-      ]
-    };
+  let cart = [];
 
-    let cart = [];
+  function resetView() {
+    document.getElementById('category-title').innerText = "Welcome";
+    document.getElementById('welcome-msg').style.display = "block";
+    document.getElementById('product-list').innerHTML = "";
+    document.getElementById('cart-page').style.display = "none";
+  }
 
-    function resetView() {
-      document.getElementById('category-title').innerText = 'Welcome to BUY MY GOODS';
-      document.getElementById('welcome-msg').style.display = 'block';
-      document.getElementById('product-list').innerHTML = '';
-      document.getElementById('back-home').style.display = 'none';
-      document.getElementById('cart-page').style.display = 'none';
-    }
+  function loadCategory(cat) {
+    const list = document.getElementById('product-list');
+    const products = productData[cat];
+    list.innerHTML = "";
+    document.getElementById('category-title').innerText = cat;
+    document.getElementById('welcome-msg').style.display = "none";
+    document.getElementById('cart-page').style.display = "none";
 
-    function loadCategory(category) {
-      const products = productData[category];
-      const list = document.getElementById('product-list');
-      const title = document.getElementById('category-title');
-      const welcome = document.getElementById('welcome-msg');
-      const backButton = document.getElementById('back-home');
-      const cartPage = document.getElementById('cart-page');
+    products.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'product-item';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${p.name}" />
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <div>$${p.price}</div>
+        <button class="btn" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+      `;
+      list.appendChild(div);
+    });
+  }
 
-      title.innerText = category === 'home-appliances' ? 'Home Appliances' : 'Readymade Garments';
-      welcome.style.display = 'none';
-      list.innerHTML = '';
-      backButton.style.display = 'block';
-      cartPage.style.display = 'none';
+  function addToCart(name, price) {
+    const item = cart.find(i => i.name === name);
+    if (item) item.qty++;
+    else cart.push({ name, price, qty: 1 });
+    updateCartCount();
+  }
 
-      products.forEach(product => {
-        const item = document.createElement('div');
-        item.className = 'product-item';
-        item.innerHTML = `
-          <img src="${product.image}" alt="Image of ${product.name}" />
-          <h3>${product.name}</h3>
-          <p>${product.description}</p>
-          <div class="price">$${product.price}</div>
-          <button class="btn" onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
-        `;
-        list.appendChild(item);
-      });
-    }
+  function updateCartCount() {
+    document.getElementById('cart-count').innerText = cart.reduce((sum,i)=>sum+i.qty,0);
+  }
 
-    function addToCart(name, price) {
-      const existing = cart.find(item => item.name === name);
-      if (existing) {
-        existing.qty++;
-      } else {
-        cart.push({ name, price, qty: 1 });
-      }
-      updateCartCount();
-    }
+  function showCart() {
+    document.getElementById('product-list').innerHTML = "";
+    document.getElementById('welcome-msg').style.display = "none";
+    document.getElementById('cart-page').style.display = "block";
 
-    function updateCartCount() {
-      document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
-    }
+    const body = document.getElementById('cart-body');
+    body.innerHTML = "";
+    let total = 0;
+    cart.forEach((item, idx) => {
+      let sub = item.qty * item.price;
+      total += sub;
+      body.innerHTML += `
+        <tr>
+          <td>${item.name}</td>
+          <td>$${item.price}</td>
+          <td>${item.qty}</td>
+          <td>$${sub}</td>
+          <td><button onclick="removeItem(${idx})">Remove</button></td>
+        </tr>`;
+    });
+    document.getElementById('cart-total').innerText = "Total: $" + total;
+  }
 
-    function showCart() {
-      document.getElementById('product-list').innerHTML = '';
-      document.getElementById('welcome-msg').style.display = 'none';
-      document.getElementById('back-home').style.display = 'block';
-      document.getElementById('cart-page').style.display = 'block';
+  function removeItem(i) {
+    cart.splice(i,1);
+    updateCartCount();
+    showCart();
+  }
 
-      const tbody = document.querySelector('#cart-table tbody');
-      tbody.innerHTML = '';
-      let total = 0;
-      cart.forEach((item, index) => {
-        const subtotal = item.price * item.qty;
-        total += subtotal;
-        tbody.innerHTML += `
-          <tr>
-            <td>${item.name}</td>
-            <td>$${item.price}</td>
-            <td>${item.qty}</td>
-            <td>$${subtotal}</td>
-            <td><button onclick="removeFromCart(${index})">Remove</button></td>
-          </tr>
-        `;
-      });
-      document.getElementById('cart-total').innerText = "Total: $" + total;
-    }
-
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      updateCartCount();
-      showCart();
-    }
-  </script>
-
+  async function checkout() {
+    const res = await fetch('/create-checkout-session', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ cart })
+    });
+    const data = await res.json();
+    if (data.url) window.location = data.url;
+    else alert("Error: " + data.error);
+  }
+</script>
 </body>
 </html>
