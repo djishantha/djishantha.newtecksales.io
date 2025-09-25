@@ -45,7 +45,9 @@
       <tbody id="cart-body"></tbody>
     </table>
     <h3 id="cart-total"></h3>
-    <button class="btn" onclick="checkout()">Pay Now</button>
+
+    <!-- PayPal button container -->
+    <div id="paypal-button-container"></div>
   </div>
 </main>
 
@@ -132,16 +134,38 @@
     showCart();
   }
 
-  async function checkout() {
-    const res = await fetch('/create-checkout-session', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ cart })
-    });
-    const data = await res.json();
-    if (data.url) window.location = data.url;
-    else alert("Error: " + data.error);
+  function getCartTotal() {
+    return cart.reduce((sum, item) => sum + (item.price * item.qty), 0).toFixed(2);
   }
 </script>
+
+<!-- Load PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AXUZYpgdB2oGgzp-3hGfnY5e_Qyuqs1tokPRfPpKLehbLXRXo6PBzvnxdKJiAL3z97c46aVOk-s2yMkT&currency=USD"></script>
+
+<script>
+  paypal.Buttons({
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: getCartTotal()  // dynamic total
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        alert('✅ Transaction completed by ' + details.payer.name.given_name);
+        cart = []; // clear cart
+        updateCartCount();
+        resetView();
+      });
+    },
+    onError: function(err) {
+      alert('❌ Payment failed: ' + err);
+    }
+  }).render('#paypal-button-container');
+</script>
+
 </body>
 </html>
