@@ -81,34 +81,36 @@
 
   let cart = [];
 
-  function resetView() {
-    document.getElementById('category-title').innerText = "Welcome";
-    document.getElementById('welcome-msg').style.display = "block";
-    document.getElementById('product-list').innerHTML = "";
-    document.getElementById('cart-page').style.display = "none";
-  }
+function resetView() {
+  document.getElementById('category-title').innerText = "Welcome";
+  document.getElementById('welcome-section').style.display = "block"; // show welcome section
+  document.getElementById('product-list').innerHTML = "";
+  document.getElementById('cart-page').style.display = "none";
+}
 
-  function loadCategory(cat) {
-    const list = document.getElementById('product-list');
-    const products = productData[cat];
-    list.innerHTML = "";
-    document.getElementById('category-title').innerText = cat;
-    document.getElementById('welcome-msg').style.display = "none";
-    document.getElementById('cart-page').style.display = "none";
 
-    products.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'product-item';
-      div.innerHTML = `
-        <img src="${p.image}" alt="${p.name}" />
-        <h3>${p.name}</h3>
-        <p>${p.description}</p>
-        <div>$${p.price}</div>
-        <button class="btn" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-      `;
-      list.appendChild(div);
-    });
-  }
+ function loadCategory(cat) {
+  const list = document.getElementById('product-list');
+  const products = productData[cat];
+  list.innerHTML = "";
+  document.getElementById('category-title').innerText = cat;
+  document.getElementById('welcome-section').style.display = "none"; // hide welcome section
+  document.getElementById('cart-page').style.display = "none";
+
+  products.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'product-item';
+    div.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" />
+      <h3>${p.name}</h3>
+      <p>${p.description}</p>
+      <div>$${p.price}</div>
+      <button class="btn" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
 
   function addToCart(name, price) {
     const item = cart.find(i => i.name === name);
@@ -121,28 +123,29 @@
     document.getElementById('cart-count').innerText = cart.reduce((sum,i)=>sum+i.qty,0);
   }
 
-  function showCart() {
-    document.getElementById('product-list').innerHTML = "";
-    document.getElementById('welcome-msg').style.display = "none";
-    document.getElementById('cart-page').style.display = "block";
+function showCart() {
+  document.getElementById('product-list').innerHTML = "";
+  document.getElementById('welcome-section').style.display = "none"; // hide welcome section
+  document.getElementById('cart-page').style.display = "block";
 
-    const body = document.getElementById('cart-body');
-    body.innerHTML = "";
-    let total = 0;
-    cart.forEach((item, idx) => {
-      let sub = item.qty * item.price;
-      total += sub;
-      body.innerHTML += `
-        <tr>
-          <td>${item.name}</td>
-          <td>$${item.price}</td>
-          <td>${item.qty}</td>
-          <td>$${sub}</td>
-          <td><button onclick="removeItem(${idx})">Remove</button></td>
-        </tr>`;
-    });
-    document.getElementById('cart-total').innerText = "Total: $" + total;
-  }
+  const body = document.getElementById('cart-body');
+  body.innerHTML = "";
+  let total = 0;
+  cart.forEach((item, idx) => {
+    let sub = item.qty * item.price;
+    total += sub;
+    body.innerHTML += `
+      <tr>
+        <td>${item.name}</td>
+        <td>$${item.price}</td>
+        <td>${item.qty}</td>
+        <td>$${sub}</td>
+        <td><button onclick="removeItem(${idx})">Remove</button></td>
+      </tr>`;
+  });
+  document.getElementById('cart-total').innerText = "Total: $" + total;
+}
+
 
   function removeItem(i) {
     cart.splice(i,1);
