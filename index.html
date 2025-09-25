@@ -45,14 +45,17 @@
     <a href="#" onclick="loadCategory('home-appliances')">Home Appliances</a>
     <a href="#" onclick="loadCategory('garments')">Readymade Garments</a>
   </nav>
- <div style="display:flex; align-items:center; gap:10px; position:absolute; right:20px; top:20px;">
-  <div id="cart-btn" onclick="showCart()" style="background:#0070ba; padding:8px 12px; border-radius:4px; cursor:pointer;">
+<div style="position:absolute; top:20px; right:20px; display:flex; gap:10px;">
+  <div id="cart-btn" onclick="showCart()" 
+       style="background:#0070ba; padding:8px 12px; border-radius:4px; cursor:pointer; color:#fff;">
     🛒 Cart (<span id="cart-count">0</span>)
   </div>
-  <div id="refresh-btn" onclick="refreshCart()" style="background:#d9534f; padding:8px 12px; border-radius:4px; cursor:pointer; color:#fff;">
+  <div id="refresh-btn" onclick="refreshCart()" 
+       style="background:#d9534f; padding:8px 12px; border-radius:4px; cursor:pointer; color:#fff;">
     🔄 Refresh
   </div>
 </div>
+
 
 </header>
 <main>
