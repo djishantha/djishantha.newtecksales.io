@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BUY MY GOODS</title>
+  <title>NEW TECK SALES</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f8f8f8; margin: 0; }
     header { background: #333; color: #fff; padding: 20px; text-align: center; position: relative; }
@@ -20,11 +20,26 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
     th { background: #eee; }
+    #welcome-section {
+  text-align: center;
+  margin-top: 80px;
+}
+#welcome-msg {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #555;
+}
+#welcome-img {
+  margin-top: 20px;
+  max-width: 300px;
+  border-radius: 12px;
+}
+
   </style>
 </head>
 <body>
 <header>
-  <h1>BUY MY GOODS</h1>
+  <h1>NEW TECK SALES</h1>
   <nav>
     <a href="#" onclick="resetView()">Home</a>
     <a href="#" onclick="loadCategory('home-appliances')">Home Appliances</a>
@@ -32,10 +47,13 @@
   </nav>
   <div id="cart-btn" onclick="showCart()">🛒 Cart (<span id="cart-count">0</span>)</div>
 </header>
-
 <main>
-  <h2 id="category-title">Welcome</h2>
-  <p id="welcome-msg">Choose a category to browse products.</p>
+  <div id="welcome-section">
+    <h2 id="category-title">Welcome</h2>
+    <p id="welcome-msg">Choose a category to browse products.</p>
+    <img id="welcome-img" src="newteck.jpg" alt="Welcome Image">
+  </div>
+
   <div id="product-list" class="product-list"></div>
 
   <div id="cart-page" style="display:none;">
@@ -45,8 +63,6 @@
       <tbody id="cart-body"></tbody>
     </table>
     <h3 id="cart-total"></h3>
-
-    <!-- PayPal button container -->
     <div id="paypal-button-container"></div>
   </div>
 </main>
