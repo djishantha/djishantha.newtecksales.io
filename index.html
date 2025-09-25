@@ -45,7 +45,15 @@
     <a href="#" onclick="loadCategory('home-appliances')">Home Appliances</a>
     <a href="#" onclick="loadCategory('garments')">Readymade Garments</a>
   </nav>
-  <div id="cart-btn" onclick="showCart()">🛒 Cart (<span id="cart-count">0</span>)</div>
+ <div style="display:flex; align-items:center; gap:10px; position:absolute; right:20px; top:20px;">
+  <div id="cart-btn" onclick="showCart()" style="background:#0070ba; padding:8px 12px; border-radius:4px; cursor:pointer;">
+    🛒 Cart (<span id="cart-count">0</span>)
+  </div>
+  <div id="refresh-btn" onclick="refreshCart()" style="background:#d9534f; padding:8px 12px; border-radius:4px; cursor:pointer; color:#fff;">
+    🔄 Refresh
+  </div>
+</div>
+
 </header>
 <main>
   <div id="welcome-section">
@@ -152,6 +160,11 @@ function showCart() {
     updateCartCount();
     showCart();
   }
+  function refreshCart() {
+  cart = []; // clear cart
+  updateCartCount(); // set count back to 0
+  resetView(); // go back to welcome page
+}
 
   function getCartTotal() {
     return cart.reduce((sum, item) => sum + (item.price * item.qty), 0).toFixed(2);
